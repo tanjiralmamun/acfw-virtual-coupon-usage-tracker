@@ -1,0 +1,186 @@
+# Virtual Coupon Usage Tracker Plugin - Cursor Rules
+
+## Project Overview
+This is a WordPress plugin that tracks virtual coupon usage with order IDs, shows reasons for missing order IDs, and provides AJAX pagination. It's designed to be compatible with WooCommerce HPOS (High-Performance Order Storage).
+
+## Code Standards & Conventions
+
+### PHP Standards
+- Follow WordPress Coding Standards
+- Use proper WordPress hooks and filters
+- Always sanitize and validate input data
+- Use prepared statements for database queries
+- Implement proper error handling with try-catch blocks
+- Use WordPress nonce verification for AJAX requests
+- Check user capabilities before allowing actions
+
+### File Structure
+```
+virtual-coupon-usage-tracker/
+├── virtual-coupon-usage-tracker.php (main plugin file)
+├── includes/
+│   ├── class-vcut-database.php (database operations)
+│   ├── class-vcut-admin.php (admin interface)
+│   └── class-vcut-ajax.php (AJAX handlers)
+├── assets/
+│   ├── css/
+│   │   └── admin.css (admin styles)
+│   └── js/
+│       └── admin.js (admin JavaScript)
+└── .cursorrules (this file)
+```
+
+### Naming Conventions
+- Plugin prefix: `VCUT_` for classes, `vcut_` for functions
+- CSS classes: `vcut-` prefix (kebab-case)
+- JavaScript: camelCase for variables and functions
+- Database tables: Use WordPress prefix + `acfw_virtual_coupons`
+- AJAX actions: `vcut_` prefix
+
+### Security Best Practices
+- Always verify nonces in AJAX requests
+- Check user capabilities (`manage_woocommerce`)
+- Sanitize all input data using WordPress functions
+- Escape output data when displaying
+- Use prepared statements for database queries
+- Validate date formats and other input types
+
+### HPOS Compatibility
+- Always check if HPOS is enabled before using order tables
+- Use `\Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled()`
+- Provide fallback queries for legacy post-based orders
+- Use appropriate order edit links based on HPOS status
+
+### Database Operations
+- Use WordPress `$wpdb` global for database operations
+- Always use prepared statements with `$wpdb->prepare()`
+- Handle both HPOS and legacy order storage
+- Implement proper error handling for database queries
+- Use transactions for bulk operations when needed
+
+### AJAX Implementation
+- Use WordPress AJAX hooks (`wp_ajax_` and `wp_ajax_nopriv_`)
+- Always verify nonces and check user permissions
+- Return proper JSON responses using `wp_send_json_success()` and `wp_send_json_error()`
+- Handle both success and error cases in JavaScript
+- Implement loading states and error messages
+
+### Frontend Assets
+- Enqueue scripts and styles properly using WordPress hooks
+- Use versioning for cache busting
+- Localize JavaScript with translation strings and AJAX URLs
+- Only load assets on relevant admin pages
+- Use WordPress admin styles for consistency
+
+### Responsive Design
+- Use flexbox for layout components
+- Implement mobile-first responsive design
+- Make tables scrollable on mobile devices
+- Use appropriate breakpoints for different screen sizes
+- Test on various devices and screen sizes
+
+### Error Handling
+- Implement proper error handling in all functions
+- Use WordPress error handling patterns
+- Provide meaningful error messages to users
+- Log errors for debugging when appropriate
+- Handle edge cases gracefully
+
+### Performance Considerations
+- Use pagination for large datasets (20 items per page)
+- Implement efficient database queries with proper indexing
+- Use AJAX for dynamic content loading
+- Minimize database queries where possible
+- Cache results when appropriate
+
+### Accessibility
+- Use proper ARIA labels and roles
+- Ensure keyboard navigation works properly
+- Provide alternative text for icons
+- Use semantic HTML elements
+- Test with screen readers
+
+### Testing Guidelines
+- Test with both HPOS enabled and disabled
+- Test with different user roles and capabilities
+- Test AJAX functionality thoroughly
+- Test responsive design on various devices
+- Test with large datasets for performance
+- Test error scenarios and edge cases
+
+### Documentation
+- Document all functions and classes with proper PHPDoc
+- Include parameter types and return values
+- Document complex logic and algorithms
+- Keep README up to date with installation and usage instructions
+- Document any dependencies or requirements
+
+### WordPress Integration
+- Use WordPress admin menu system
+- Follow WordPress admin UI patterns
+- Use WordPress color schemes and styling
+- Implement proper plugin activation/deactivation hooks
+- Use WordPress translation functions for internationalization
+
+### Version Control
+- Use meaningful commit messages
+- Keep commits focused and atomic
+- Tag releases appropriately
+- Maintain a changelog
+- Use branching strategy for features and fixes
+
+## Development Workflow
+1. Always test locally before committing
+2. Check for PHP errors and warnings
+3. Validate HTML and CSS
+4. Test JavaScript functionality
+5. Verify AJAX requests work properly
+6. Test with different WordPress versions
+7. Check plugin compatibility with other plugins
+
+## Common Patterns to Follow
+
+### Database Query Pattern
+```php
+global $wpdb;
+$results = $wpdb->get_results(
+    $wpdb->prepare("SELECT * FROM {$table} WHERE id = %d", $id),
+    ARRAY_A
+);
+```
+
+### AJAX Handler Pattern
+```php
+public function ajax_handler() {
+    if (!wp_verify_nonce($_POST['nonce'], 'action_nonce')) {
+        wp_die('Security check failed');
+    }
+    
+    if (!current_user_can('manage_woocommerce')) {
+        wp_die('Insufficient permissions');
+    }
+    
+    // Process request
+    wp_send_json_success($data);
+}
+```
+
+### HPOS Compatibility Pattern
+```php
+$hpos_enabled = class_exists('\Automattic\WooCommerce\Utilities\OrderUtil') && 
+               \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled();
+
+if ($hpos_enabled) {
+    // HPOS query
+} else {
+    // Legacy query
+}
+```
+
+## Plugin-Specific Guidelines
+- Always check if Advanced Coupons plugin is active
+- Use the virtual coupons table structure from Advanced Coupons
+- Implement proper reasons for missing order IDs
+- Show statistics cards for quick overview
+- Use modal dialogs for detailed information
+- Implement proper filtering and search functionality 

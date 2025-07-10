@@ -1,0 +1,440 @@
+/**
+ * Admin CSS for Virtual Coupon Usage Tracker
+ */
+
+/* Statistics Cards */
+.vcut-stats-cards {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.vcut-stat-card {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 20px;
+    min-width: 180px;
+    text-align: center;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+    flex: 1;
+}
+
+.vcut-stat-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #646970;
+    font-weight: 500;
+}
+
+.vcut-stat-number {
+    font-size: 32px;
+    font-weight: 600;
+    color: #1d2327;
+    line-height: 1.2;
+}
+
+/* Filters */
+.vcut-filters {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.vcut-filter-row {
+    display: flex;
+    gap: 15px;
+    align-items: end;
+    flex-wrap: wrap;
+}
+
+.vcut-filter-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+}
+
+.vcut-filter-group label {
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #1d2327;
+}
+
+.vcut-filter-group input,
+.vcut-filter-group select {
+    padding: 6px 8px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.vcut-filter-group input:focus,
+.vcut-filter-group select:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: none;
+}
+
+/* Table Container */
+.vcut-table-container {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+/* Loading Spinner */
+.vcut-loading {
+    text-align: center;
+    padding: 40px 20px;
+    background: #fff;
+}
+
+.vcut-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #2271b1;
+    border-radius: 50%;
+    animation: vcut-spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes vcut-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Table Styles */
+#vcut-results-table {
+    margin: 0;
+    border: none;
+}
+
+#vcut-results-table th {
+    background: #f6f7f7;
+    border-bottom: 1px solid #c3c4c7;
+    padding: 12px 8px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+#vcut-results-table td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #f0f0f1;
+    vertical-align: middle;
+}
+
+#vcut-results-table code {
+    background: #f0f0f1;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    color: #d63384;
+}
+
+/* Status Badges */
+.vcut-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.vcut-status-pending {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.vcut-status-used {
+    background: #d1edff;
+    color: #0c5460;
+    border: 1px solid #b3d7ff;
+}
+
+.vcut-status-unlimited {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+/* No Order Indicator */
+.vcut-no-order {
+    color: #d63384;
+    font-style: italic;
+}
+
+/* No Data Message */
+.vcut-no-data {
+    text-align: center;
+    padding: 40px 20px;
+    color: #646970;
+    font-style: italic;
+}
+
+/* Info Button */
+.vcut-info-btn {
+    padding: 4px 8px;
+    min-height: auto;
+    line-height: 1;
+    border-radius: 3px;
+    background: #2271b1;
+    color: #fff;
+    border: 1px solid #2271b1;
+}
+
+.vcut-info-btn:hover {
+    background: #135e96;
+    border-color: #135e96;
+    color: #fff;
+}
+
+.vcut-info-btn .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Pagination */
+.vcut-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-top: 1px solid #c3c4c7;
+    background: #f6f7f7;
+}
+
+.vcut-pagination-info {
+    color: #646970;
+    font-size: 14px;
+}
+
+.vcut-pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vcut-pagination-controls button {
+    padding: 6px 12px;
+    border: 1px solid #c3c4c7;
+    background: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.vcut-pagination-controls button:hover:not(:disabled) {
+    background: #f6f7f7;
+    border-color: #8c8f94;
+}
+
+.vcut-pagination-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#vcut-page-numbers {
+    display: flex;
+    gap: 5px;
+}
+
+.vcut-page-number {
+    padding: 6px 10px;
+    border: 1px solid #c3c4c7;
+    background: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    min-width: 35px;
+    text-align: center;
+    text-decoration: none;
+    color: #1d2327;
+}
+
+.vcut-page-number:hover {
+    background: #f6f7f7;
+    border-color: #8c8f94;
+    color: #1d2327;
+}
+
+.vcut-page-number.current {
+    background: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+}
+
+/* Modal Styles */
+.vcut-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vcut-modal-content {
+    background: #fff;
+    border-radius: 4px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.vcut-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #c3c4c7;
+}
+
+.vcut-modal-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #1d2327;
+}
+
+.vcut-modal-close {
+    font-size: 24px;
+    cursor: pointer;
+    color: #646970;
+    line-height: 1;
+}
+
+.vcut-modal-close:hover {
+    color: #d63384;
+}
+
+.vcut-modal-body {
+    padding: 20px;
+}
+
+/* Reasons List */
+.vcut-reasons-list ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.vcut-reasons-list li {
+    margin: 8px 0;
+    color: #1d2327;
+}
+
+.vcut-reasons-list p {
+    margin: 0 0 15px 0;
+    color: #646970;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .vcut-stats-cards {
+        gap: 15px;
+    }
+    
+    .vcut-stat-card {
+        min-width: 150px;
+    }
+}
+
+@media (max-width: 768px) {
+    .vcut-stats-cards {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .vcut-stat-card {
+        min-width: auto;
+    }
+    
+    .vcut-filter-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .vcut-filter-group {
+        min-width: auto;
+    }
+    
+    .vcut-pagination {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .vcut-pagination-controls {
+        justify-content: center;
+    }
+    
+    /* Make table scrollable on mobile */
+    .vcut-table-container {
+        overflow-x: auto;
+    }
+    
+    #vcut-results-table {
+        min-width: 800px;
+    }
+}
+
+@media (max-width: 480px) {
+    .vcut-stat-number {
+        font-size: 24px;
+    }
+    
+    .vcut-modal-content {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .vcut-modal-header {
+        padding: 15px;
+    }
+    
+    .vcut-modal-body {
+        padding: 15px;
+    }
+    
+    #vcut-page-numbers {
+        flex-wrap: wrap;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .vcut-filters,
+    .vcut-pagination,
+    .vcut-info-btn {
+        display: none !important;
+    }
+    
+    .vcut-table-container {
+        border: none;
+        box-shadow: none;
+    }
+    
+    #vcut-results-table {
+        border-collapse: collapse;
+    }
+    
+    #vcut-results-table th,
+    #vcut-results-table td {
+        border: 1px solid #000;
+        padding: 8px;
+    }
+} 

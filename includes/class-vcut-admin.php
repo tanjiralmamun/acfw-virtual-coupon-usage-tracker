@@ -240,7 +240,7 @@ class VCUT_Admin {
                 'main_coupon_title' => esc_html($coupon['main_coupon_title'] ?: __('N/A', 'virtual-coupon-usage-tracker')),
                 'status' => esc_html($coupon['coupon_status']),
                 'status_label' => self::get_status_label($coupon['coupon_status']),
-                'user_name' => esc_html($coupon['user_name'] ?: __('Guest', 'virtual-coupon-usage-tracker')),
+                'user_name' => self::get_display_user_name($coupon),
                 'user_email' => esc_html($coupon['user_email'] ?: ''),
                 'order_id' => $coupon['order_id'] ? intval($coupon['order_id']) : null,
                 'order_total' => $coupon['order_total'] ? wc_price($coupon['order_total']) : '',
@@ -253,6 +253,39 @@ class VCUT_Admin {
         }
         
         return $formatted;
+    }
+    
+    /**
+     * Get display user name based on order availability
+     *
+     * @param array $coupon Coupon data
+     * @return string Display name for user
+     */
+    private static function get_display_user_name($coupon) {
+        // If there's no order, show dash
+        if (empty($coupon['order_id'])) {
+            return '-';
+        }
+        
+        // If there's an order, prefer billing email from order
+        if (!empty($coupon['order_billing_email'])) {
+            $email = esc_html($coupon['order_billing_email']);
+            
+            // Check if this is a guest customer using the order's customer ID
+            // If order_customer_id is empty or 0, it's a guest customer
+            if (empty($coupon['order_customer_id']) || intval($coupon['order_customer_id']) === 0) {
+                $email .= ' ' . __('(Guest)', 'virtual-coupon-usage-tracker');
+            }
+            
+            return $email;
+        }
+        
+        // Fallback to user email or dash
+        if (!empty($coupon['user_email'])) {
+            return esc_html($coupon['user_email']);
+        }
+        
+        return '-';
     }
     
     /**

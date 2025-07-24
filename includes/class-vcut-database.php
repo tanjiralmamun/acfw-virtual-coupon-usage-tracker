@@ -63,6 +63,8 @@ class VCUT_Database {
                 COALESCE(o.post_status, oh.status) as order_status,
                 COALESCE(o.post_date, oh.date_created_gmt) as order_date,
                 COALESCE(om_total.meta_value, oh.total_amount) as order_total,
+                COALESCE(om_billing_email.meta_value, oh.billing_email) as order_billing_email,
+                COALESCE(om_customer_id.meta_value, oh.customer_id) as order_customer_id,
                 u.display_name as user_name,
                 u.user_email as user_email
             FROM {$virtual_coupons_table} vc
@@ -72,6 +74,8 @@ class VCUT_Database {
             LEFT JOIN {$wpdb->prefix}woocommerce_order_items oi ON oi.order_item_id = oim.order_item_id AND oi.order_item_type = 'coupon'
             LEFT JOIN {$wpdb->posts} o ON o.ID = oi.order_id AND o.post_type = 'shop_order'
             LEFT JOIN {$wpdb->postmeta} om_total ON om_total.post_id = o.ID AND om_total.meta_key = '_order_total'
+            LEFT JOIN {$wpdb->postmeta} om_billing_email ON om_billing_email.post_id = o.ID AND om_billing_email.meta_key = '_billing_email'
+            LEFT JOIN {$wpdb->postmeta} om_customer_id ON om_customer_id.post_id = o.ID AND om_customer_id.meta_key = '_customer_user'
         ";
         
         // Add HPOS support if enabled

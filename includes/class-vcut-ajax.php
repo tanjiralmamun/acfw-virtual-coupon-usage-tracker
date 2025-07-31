@@ -22,6 +22,8 @@ class VCUT_Ajax {
         // AJAX actions for logged-in users
         add_action('wp_ajax_vcut_get_coupons', array($this, 'get_coupons'));
         add_action('wp_ajax_vcut_get_missing_order_reasons', array($this, 'get_missing_order_reasons'));
+        add_action('wp_ajax_vcut_get_parent_coupons', array($this, 'get_parent_coupons'));
+        add_action('wp_ajax_vcut_change_coupon_status', array($this, 'change_coupon_status'));
         
         // AJAX actions for non-logged-in users (if needed)
         // add_action('wp_ajax_nopriv_vcut_get_coupons', array($this, 'get_coupons'));
@@ -43,12 +45,19 @@ class VCUT_Ajax {
         
         // Get request parameters
         $page = isset($_POST['page']) ? intval($_POST['page']) : 1;
+        $per_page = isset($_POST['per_page']) ? intval($_POST['per_page']) : 100;
         $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
         $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
+        $parent_coupon = isset($_POST['parent_coupon']) ? intval($_POST['parent_coupon']) : 0;
         $date_from = isset($_POST['date_from']) ? sanitize_text_field($_POST['date_from']) : '';
         $date_to = isset($_POST['date_to']) ? sanitize_text_field($_POST['date_to']) : '';
-        $order_by = isset($_POST['order_by']) ? sanitize_text_field($_POST['order_by']) : 'date_created';
+        $order_by = isset($_POST['order_by']) ? sanitize_text_field($_POST['order_by']) : 'order_id';
         $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : 'DESC';
+        
+        // Validate per_page value
+        if (!in_array($per_page, array(20, 50, 100))) {
+            $per_page = 100;
+        }
         
         // Validate and sanitize date inputs
         if ($date_from && !$this->validate_date($date_from)) {
@@ -61,9 +70,10 @@ class VCUT_Ajax {
         // Build query arguments
         $args = array(
             'page' => $page,
-            'per_page' => 20,
+            'per_page' => $per_page,
             'search' => $search,
             'status' => $status,
+            'parent_coupon' => $parent_coupon,
             'date_from' => $date_from,
             'date_to' => $date_to,
             'order_by' => $order_by,
@@ -187,15 +197,45 @@ class VCUT_Ajax {
             }
             
             $actions = '';
+            
+            // Add info button for coupons without orders
             if (!$coupon['has_order']) {
-                $actions = sprintf(
+                $actions .= sprintf(
                     '<button type="button" class="button vcut-info-btn" data-virtual-coupon-id="%d" title="%s">
                         <span class="dashicons dashicons-info"></span>
-                    </button>',
+                    </button> ',
                     $coupon['id'],
                     __('View reasons for missing order', 'virtual-coupon-usage-tracker')
                 );
             }
+            
+            // Add actions dropdown
+            $actions .= '<div class="vcut-actions-dropdown">';
+            $actions .= '<button type="button" class="button vcut-actions-btn" title="' . __('Actions', 'virtual-coupon-usage-tracker') . '">';
+            $actions .= '<span class="dashicons dashicons-menu"></span>';
+            $actions .= '</button>';
+            $actions .= '<div class="vcut-actions-menu">';
+            
+            // Status change options based on current status
+            if ($coupon['status'] === 'pending') {
+                $actions .= '<a href="#" class="vcut-change-status" data-coupon-id="' . $coupon['id'] . '" data-new-status="used">' . __('Mark as Used', 'virtual-coupon-usage-tracker') . '</a>';
+                $actions .= '<a href="#" class="vcut-change-status" data-coupon-id="' . $coupon['id'] . '" data-new-status="unlimited">' . __('Mark as Unlimited', 'virtual-coupon-usage-tracker') . '</a>';
+            } elseif ($coupon['status'] === 'used') {
+                $actions .= '<a href="#" class="vcut-change-status" data-coupon-id="' . $coupon['id'] . '" data-new-status="pending">' . __('Reset to Pending', 'virtual-coupon-usage-tracker') . '</a>';
+                if (!$coupon['has_order']) {
+                    $actions .= '<a href="#" class="vcut-change-status" data-coupon-id="' . $coupon['id'] . '" data-new-status="unlimited">' . __('Mark as Unlimited', 'virtual-coupon-usage-tracker') . '</a>';
+                }
+            } elseif ($coupon['status'] === 'unlimited') {
+                $actions .= '<a href="#" class="vcut-change-status" data-coupon-id="' . $coupon['id'] . '" data-new-status="pending">' . __('Reset to Pending', 'virtual-coupon-usage-tracker') . '</a>';
+                $actions .= '<a href="#" class="vcut-change-status" data-coupon-id="' . $coupon['id'] . '" data-new-status="used">' . __('Mark as Used', 'virtual-coupon-usage-tracker') . '</a>';
+            }
+            
+            // Always show option to edit parent coupon
+            $actions .= '<div class="vcut-menu-separator"></div>';
+            $actions .= '<a href="#" class="vcut-edit-parent-coupon" data-parent-coupon-id="' . ($coupon['coupon_id'] ?? 0) . '">' . __('Edit Parent Coupon', 'virtual-coupon-usage-tracker') . '</a>';
+            
+            $actions .= '</div>';
+            $actions .= '</div>';
             
             $html .= sprintf(
                 '<tr>
@@ -216,7 +256,7 @@ class VCUT_Ajax {
                 $coupon['user_email'] ? '<br><small>' . $coupon['user_email'] . '</small>' : '',
                 $order_cell,
                 $coupon['order_total'],
-                $coupon['created_date'],
+                $coupon['usage_date'],
                 $actions
             );
         }
@@ -281,6 +321,90 @@ class VCUT_Ajax {
         }
     }
     
+    /**
+     * Get parent coupons for filter dropdown via AJAX
+     */
+    public function get_parent_coupons() {
+        // Verify nonce
+        if (!wp_verify_nonce($_POST['nonce'], 'vcut_ajax_nonce')) {
+            wp_die(__('Security check failed', 'virtual-coupon-usage-tracker'));
+        }
+        
+        // Check user permissions
+        if (!current_user_can('manage_woocommerce')) {
+            wp_die(__('You do not have permission to access this data', 'virtual-coupon-usage-tracker'));
+        }
+        
+        try {
+            $parent_coupons = VCUT_Database::get_parent_coupons();
+            wp_send_json_success(array('coupons' => $parent_coupons));
+        } catch (Exception $e) {
+            wp_send_json_error(array(
+                'message' => __('Failed to retrieve parent coupons', 'virtual-coupon-usage-tracker'),
+                'error' => $e->getMessage()
+            ));
+        }
+    }
+    
+    /**
+     * Change coupon status via AJAX
+     */
+    public function change_coupon_status() {
+        // Verify nonce
+        if (!wp_verify_nonce($_POST['nonce'], 'vcut_ajax_nonce')) {
+            wp_die(__('Security check failed', 'virtual-coupon-usage-tracker'));
+        }
+        
+        // Check user permissions
+        if (!current_user_can('manage_woocommerce')) {
+            wp_die(__('You do not have permission to perform this action', 'virtual-coupon-usage-tracker'));
+        }
+        
+        $coupon_id = isset($_POST['coupon_id']) ? intval($_POST['coupon_id']) : 0;
+        $new_status = isset($_POST['new_status']) ? sanitize_text_field($_POST['new_status']) : '';
+        
+        if (!$coupon_id || !$new_status) {
+            wp_send_json_error(array(
+                'message' => __('Invalid coupon ID or status', 'virtual-coupon-usage-tracker')
+            ));
+        }
+        
+        // Validate new status
+        $allowed_statuses = array('pending', 'used', 'unlimited');
+        if (!in_array($new_status, $allowed_statuses)) {
+            wp_send_json_error(array(
+                'message' => __('Invalid status provided', 'virtual-coupon-usage-tracker')
+            ));
+        }
+        
+        try {
+            $result = VCUT_Database::change_virtual_coupon_status($coupon_id, $new_status);
+            if ($result) {
+                $status_labels = array(
+                    'pending' => __('Pending', 'virtual-coupon-usage-tracker'),
+                    'used' => __('Used', 'virtual-coupon-usage-tracker'),
+                    'unlimited' => __('Unlimited', 'virtual-coupon-usage-tracker')
+                );
+                
+                wp_send_json_success(array(
+                    'message' => sprintf(
+                        __('Coupon status changed to %s successfully', 'virtual-coupon-usage-tracker'),
+                        $status_labels[$new_status]
+                    )
+                ));
+            } else {
+                wp_send_json_error(array(
+                    'message' => __('Failed to change coupon status', 'virtual-coupon-usage-tracker')
+                ));
+            }
+        } catch (Exception $e) {
+            wp_send_json_error(array(
+                'message' => __('Failed to change coupon status', 'virtual-coupon-usage-tracker'),
+                'error' => $e->getMessage()
+            ));
+        }
+    }
+
     /**
      * Validate date format
      *

@@ -47,6 +47,8 @@ class VCUT_Ajax {
         $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
         $date_from = isset($_POST['date_from']) ? sanitize_text_field($_POST['date_from']) : '';
         $date_to = isset($_POST['date_to']) ? sanitize_text_field($_POST['date_to']) : '';
+        $order_filter = isset($_POST['order_filter']) ? sanitize_text_field($_POST['order_filter']) : '';
+        $stat_filter = isset($_POST['stat_filter']) ? sanitize_text_field($_POST['stat_filter']) : '';
         $order_by = isset($_POST['order_by']) ? sanitize_text_field($_POST['order_by']) : 'date_created';
         $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : 'DESC';
         
@@ -66,6 +68,8 @@ class VCUT_Ajax {
             'status' => $status,
             'date_from' => $date_from,
             'date_to' => $date_to,
+            'order_filter' => $order_filter,
+            'stat_filter' => $stat_filter,
             'order_by' => $order_by,
             'order' => $order
         );

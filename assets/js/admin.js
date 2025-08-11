@@ -20,7 +20,9 @@
             status: '',
             parent_coupon: '',
             date_from: '',
-            date_to: ''
+            date_to: '',
+            order_filter: '', // For with_orders/without_orders
+            stat_filter: ''   // For stat card quick filters
         },
 
         // Initialize the plugin
@@ -28,14 +30,27 @@
             // Set default filter to "used" status
             this.filters.status = 'used';
             this.bindEvents();
+<<<<<<< HEAD
+            
+            // Mark the "Used" card as active by default since we start with used filter
+            $('.vcut-stat-card[data-filter="used"]').addClass('active');
+            
+=======
             this.loadParentCoupons();
             this.updateSortingUI();
+>>>>>>> aad14e771bd442e5832fa7e93b24b5bc5401405d
             this.loadCoupons();
         },
 
         // Bind event handlers
         bindEvents: function() {
             var self = this;
+
+            // Statistics card clicks
+            $('.vcut-stat-card').on('click', function() {
+                var filter = $(this).data('filter');
+                self.applyStatCardFilter(filter, $(this));
+            });
 
             // Filter button click
             $('#vcut-filter-btn').on('click', function() {
@@ -191,13 +206,67 @@
             });
         },
 
+        // Apply filter based on statistics card clicked
+        applyStatCardFilter: function(filter, $card) {
+            // Remove active class from all cards
+            $('.vcut-stat-card').removeClass('active');
+            
+            // Add active class to clicked card
+            $card.addClass('active');
+            
+            // Reset other filters except search
+            var currentSearch = this.filters.search;
+            this.filters = {
+                search: currentSearch,
+                status: '',
+                date_from: '',
+                date_to: '',
+                order_filter: '',
+                stat_filter: filter
+            };
+            
+            // Apply appropriate filter based on the card clicked
+            switch(filter) {
+                case 'total':
+                    // Show all - no additional filters
+                    break;
+                case 'used':
+                    this.filters.status = 'used';
+                    break;
+                case 'pending':
+                    this.filters.status = 'pending';
+                    break;
+                case 'with_orders':
+                    this.filters.order_filter = 'with_orders';
+                    break;
+                case 'without_orders':
+                    this.filters.order_filter = 'without_orders';
+                    break;
+            }
+            
+            // Update form fields to reflect current filters
+            $('#vcut-search').val(this.filters.search);
+            $('#vcut-status').val(this.filters.status);
+            $('#vcut-date-from').val(this.filters.date_from);
+            $('#vcut-date-to').val(this.filters.date_to);
+            
+            // Reset page and load data
+            this.currentPage = 1;
+            this.loadCoupons();
+        },
+
         // Apply filters and reload data
         applyFilters: function() {
+            // Remove active state from stat cards when applying manual filters
+            $('.vcut-stat-card').removeClass('active');
+            
             this.filters.search = $('#vcut-search').val();
             this.filters.status = $('#vcut-status').val();
             this.filters.parent_coupon = $('#vcut-parent-coupon').val();
             this.filters.date_from = $('#vcut-date-from').val();
             this.filters.date_to = $('#vcut-date-to').val();
+            this.filters.order_filter = '';
+            this.filters.stat_filter = '';
             
             this.currentPage = 1;
             this.loadCoupons();
@@ -205,6 +274,9 @@
 
         // Reset filters and reload data
         resetFilters: function() {
+            // Remove active state from stat cards
+            $('.vcut-stat-card').removeClass('active');
+            
             $('#vcut-search').val('');
             $('#vcut-status').val('used');
             $('#vcut-parent-coupon').val('');
@@ -216,7 +288,9 @@
                 status: 'used',
                 parent_coupon: '',
                 date_from: '',
-                date_to: ''
+                date_to: '',
+                order_filter: '',
+                stat_filter: ''
             };
             
             this.currentPage = 1;
@@ -249,8 +323,13 @@
                 parent_coupon: this.filters.parent_coupon,
                 date_from: this.filters.date_from,
                 date_to: this.filters.date_to,
+<<<<<<< HEAD
+                order_filter: this.filters.order_filter,
+                stat_filter: this.filters.stat_filter
+=======
                 order_by: this.sorting.orderBy,
                 order: this.sorting.order
+>>>>>>> aad14e771bd442e5832fa7e93b24b5bc5401405d
             };
 
             $.post(vcut_ajax.ajax_url, data, function(response) {

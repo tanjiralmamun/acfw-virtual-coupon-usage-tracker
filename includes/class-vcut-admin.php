@@ -118,25 +118,31 @@ class VCUT_Admin {
             
             <!-- Statistics Cards -->
             <div class="vcut-stats-cards">
-                <div class="vcut-stat-card">
+                <div class="vcut-stat-card" data-filter="total" title="<?php _e('Click to show all virtual coupons', 'virtual-coupon-usage-tracker'); ?>">
                     <h3><?php _e('Total Virtual Coupons', 'virtual-coupon-usage-tracker'); ?></h3>
                     <span class="vcut-stat-number"><?php echo number_format($stats['total']); ?></span>
                 </div>
-                <div class="vcut-stat-card">
+                <div class="vcut-stat-card" data-filter="used" title="<?php _e('Click to show used virtual coupons', 'virtual-coupon-usage-tracker'); ?>">
                     <h3><?php _e('Used', 'virtual-coupon-usage-tracker'); ?></h3>
                     <span class="vcut-stat-number"><?php echo number_format($stats['used']); ?></span>
                 </div>
-                <div class="vcut-stat-card">
+                <div class="vcut-stat-card" data-filter="pending" title="<?php _e('Click to show pending virtual coupons', 'virtual-coupon-usage-tracker'); ?>">
                     <h3><?php _e('Pending', 'virtual-coupon-usage-tracker'); ?></h3>
                     <span class="vcut-stat-number"><?php echo number_format($stats['pending']); ?></span>
                 </div>
-                <div class="vcut-stat-card">
+                <div class="vcut-stat-card" data-filter="with_orders" title="<?php _e('Click to show virtual coupons with orders', 'virtual-coupon-usage-tracker'); ?>">
                     <h3><?php _e('With Orders', 'virtual-coupon-usage-tracker'); ?></h3>
                     <span class="vcut-stat-number"><?php echo number_format($stats['with_orders']); ?></span>
                 </div>
+<<<<<<< HEAD
+                <div class="vcut-stat-card" data-filter="without_orders" title="<?php _e('Click to show virtual coupons without orders', 'virtual-coupon-usage-tracker'); ?>">
+                    <h3><?php _e('Without Orders', 'virtual-coupon-usage-tracker'); ?></h3>
+                    <span class="vcut-stat-number"><?php echo number_format($stats['without_orders']); ?></span>
+=======
                 <div class="vcut-stat-card vcut-error-coupons" data-filter="used_without_orders">
                     <h3><?php _e('Used Without Orders', 'virtual-coupon-usage-tracker'); ?></h3>
                     <span class="vcut-stat-number"><?php echo number_format($stats['used_without_orders']); ?></span>
+>>>>>>> aad14e771bd442e5832fa7e93b24b5bc5401405d
                 </div>
             </div>
             

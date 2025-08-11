@@ -34,7 +34,9 @@ class VCUT_Database {
             'order_by' => 'order_id',
             'order' => 'DESC',
             'date_from' => '',
-            'date_to' => ''
+            'date_to' => '',
+            'order_filter' => '',
+            'stat_filter' => ''
         );
         
         $args = wp_parse_args($args, $defaults);
@@ -133,6 +135,15 @@ class VCUT_Database {
             $where_conditions[] = "vc.date_created <= '{$date_to}'";
         }
         
+        // Order filter (with_orders/without_orders)
+        if (!empty($args['order_filter'])) {
+            if ($args['order_filter'] === 'with_orders') {
+                $where_conditions[] = "(COALESCE(o.ID, oh.id) IS NOT NULL)";
+            } elseif ($args['order_filter'] === 'without_orders') {
+                $where_conditions[] = "(COALESCE(o.ID, oh.id) IS NULL)";
+            }
+        }
+        
         $where_clause = 'WHERE ' . implode(' AND ', $where_conditions);
         
         // Build ORDER BY clause
@@ -171,11 +182,28 @@ class VCUT_Database {
         $query = $base_query . ' ' . $where_clause . ' ' . $order_clause . ' ' . $limit_clause;
         $results = $wpdb->get_results($query, ARRAY_A);
         
-        // Get total count
-        $count_query = "SELECT COUNT(DISTINCT vc.id) FROM {$virtual_coupons_table} vc
-                       LEFT JOIN {$wpdb->posts} p ON p.ID = vc.coupon_id AND p.post_type = 'shop_coupon'
-                       LEFT JOIN {$wpdb->users} u ON u.ID = vc.user_id
-                       {$where_clause}";
+        // Get total count - need to include the same joins for order filtering
+        $count_base_query = "
+            FROM {$virtual_coupons_table} vc
+            LEFT JOIN {$wpdb->posts} p ON p.ID = vc.coupon_id AND p.post_type = 'shop_coupon'
+            LEFT JOIN {$wpdb->users} u ON u.ID = vc.user_id
+            LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta oim ON oim.meta_key = 'acfw_virtual_coupon_id' AND oim.meta_value = vc.id
+            LEFT JOIN {$wpdb->prefix}woocommerce_order_items oi ON oi.order_item_id = oim.order_item_id AND oi.order_item_type = 'coupon'
+            LEFT JOIN {$wpdb->posts} o ON o.ID = oi.order_id AND o.post_type = 'shop_order'
+        ";
+        
+        // Add HPOS support for count query
+        if ($hpos_enabled) {
+            $count_base_query .= "
+            LEFT JOIN {$wpdb->prefix}wc_orders oh ON oh.id = oi.order_id
+            ";
+        } else {
+            $count_base_query .= "
+            LEFT JOIN {$wpdb->prefix}wc_orders oh ON 1=0
+            ";
+        }
+        
+        $count_query = "SELECT COUNT(DISTINCT vc.id) " . $count_base_query . ' ' . $where_clause;
         $total_count = $wpdb->get_var($count_query);
         
         return array(

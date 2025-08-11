@@ -4,11 +4,11 @@ Tags: woocommerce, coupons, advanced coupons, virtual coupons, tracking, usage
 Requires at least: 5.0
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Track virtual coupon usage with order IDs, show reasons for missing order IDs, and provide AJAX pagination. Compatible with HPOS.
+Advanced virtual coupon tracking with clickable analytics, status management, column sorting, and comprehensive filtering. Perfect for WooCommerce stores using Advanced Coupons.
 
 == Description ==
 
@@ -16,13 +16,15 @@ ACFW Virtual Coupon Usage Tracker is a powerful WordPress plugin designed to enh
 
 = Key Features =
 
-* **Virtual Coupon Tracking**: Monitor all virtual coupon usage with detailed information
-* **Order ID Association**: Track which orders used specific virtual coupons
-* **Missing Order ID Detection**: Identify and display reasons why some coupons may not have associated order IDs
-* **AJAX Pagination**: Fast, responsive pagination for large datasets without page reloads
-* **HPOS Compatibility**: Fully compatible with WooCommerce High-Performance Order Storage (HPOS)
-* **Advanced Filtering**: Filter coupons by status, parent coupon, date range, and search terms
-* **User Information**: Display user details associated with coupon usage
+* **Clickable Analytics Dashboard**: Interactive statistics cards that instantly filter results
+* **Status Management**: Change coupon status directly from the interface with confirmation dialogs
+* **Advanced Column Sorting**: Sort by order ID, usage date, and other important fields
+* **Comprehensive Action Menu**: Dropdown actions for status changes and parent coupon editing
+* **Smart Filtering**: Filter by status, parent coupon, date range, search terms, and order association
+* **Usage Date Intelligence**: Displays actual usage date vs estimated date with visual indicators
+* **Interactive Notifications**: Toast notifications and modal confirmations for better UX
+* **Customizable Pagination**: Choose items per page (20, 50, 100) for optimal viewing
+* **HPOS Compatibility**: Fully compatible with WooCommerce High-Performance Order Storage
 * **Real-time Updates**: Live data updates with modern AJAX interface
 
 = Requirements =
@@ -36,11 +38,12 @@ ACFW Virtual Coupon Usage Tracker is a powerful WordPress plugin designed to enh
 
 The plugin adds a "Virtual Coupon Usage" page under the WooCommerce menu in your WordPress admin. This interface provides:
 
-* Comprehensive coupon usage dashboard
-* Search and filter functionality
-* Sortable columns for easy data management
-* Export capabilities for reporting
-* Detailed coupon information display
+* **Interactive Analytics Dashboard**: Clickable statistics cards for instant filtering
+* **Advanced Data Management**: Sortable columns, customizable pagination, and status management
+* **Comprehensive Search & Filtering**: Filter by status, parent coupon, date range, and order association
+* **Intuitive Actions**: Dropdown menus for status changes, parent coupon editing, and more
+* **Visual Feedback**: Usage dates with actual vs estimated indicators and error states
+* **Modern UX**: Toast notifications, confirmation dialogs, and smooth interactions
 
 = HPOS Support =
 
@@ -84,6 +87,21 @@ No, the plugin is optimized for performance with AJAX-based pagination and effic
 
 == Changelog ==
 
+= 1.1.1 =
+* **New**: Clickable statistics cards for instant filtering - all analytics boxes now filter results with visual feedback
+* **New**: Column sorting functionality for Order ID and Usage Date with visual indicators
+* **New**: Status management system - change coupon status directly from the interface
+* **New**: Comprehensive actions dropdown menu with status changes and parent coupon editing
+* **New**: Parent coupon filtering dropdown loaded dynamically
+* **New**: Usage date intelligence - shows actual usage date vs estimated with visual distinction
+* **New**: Interactive notification system with toast notifications and confirmation dialogs
+* **New**: Customizable pagination (20, 50, 100 items per page)
+* **Enhancement**: Improved UI/UX with hover effects, smooth animations, and better visual feedback
+* **Enhancement**: Enhanced error handling and user feedback
+* **Enhancement**: Better default state management (starts with "Used" filter active)
+* **Enhancement**: Improved responsive design for mobile devices
+* **Fix**: Resolved merge conflicts and code consistency issues
+
 = 1.1.0 =
 * Enhanced HPOS compatibility
 * Improved AJAX pagination performance
@@ -101,6 +119,9 @@ No, the plugin is optimized for performance with AJAX-based pagination and effic
 * Search and filter functionality
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+Major UI/UX upgrade! All statistics cards are now clickable for instant filtering, added status management, column sorting, and many more interactive features. Highly recommended upgrade for better user experience.
 
 = 1.1.0 =
 This version includes important performance improvements and enhanced HPOS compatibility. Recommended for all users.

@@ -1,6 +1,6 @@
 # ACFW Virtual Coupon Usage Tracker
 
-A powerful WordPress plugin for tracking virtual coupon usage with Advanced Coupons for WooCommerce. Features comprehensive monitoring, AJAX pagination, and HPOS compatibility.
+A powerful WordPress plugin for tracking virtual coupon usage with Advanced Coupons for WooCommerce. Features clickable analytics, status management, column sorting, and comprehensive filtering with modern UX.
 
 ## Description
 
@@ -8,14 +8,34 @@ ACFW Virtual Coupon Usage Tracker enhances your WooCommerce store's coupon manag
 
 ## Key Features
 
-- **Virtual Coupon Tracking**: Complete monitoring of all virtual coupon usage
-- **Order ID Association**: Track which orders used specific virtual coupons
-- **Missing Order ID Detection**: Identify and display reasons for missing order associations
-- **AJAX Pagination**: Fast, responsive pagination without page reloads
+### 🎯 Interactive Analytics Dashboard
+- **Clickable Statistics Cards**: All analytics cards filter results instantly with visual feedback
+- **Smart Default State**: Starts with "Used" coupons view for most common use case
+- **Real-time Data**: Live updates as you interact with filters
+
+### ⚙️ Advanced Management Tools
+- **Status Management**: Change coupon status directly from the interface
+- **Action Dropdown Menus**: Comprehensive actions for each coupon
+- **Parent Coupon Editing**: Direct access to edit parent coupons
+- **Bulk Operations**: Efficient management of multiple coupons
+
+### 📊 Enhanced Data Viewing
+- **Column Sorting**: Sort by Order ID, Usage Date, and more with visual indicators
+- **Usage Date Intelligence**: Shows actual vs estimated usage dates
+- **Customizable Pagination**: Choose 20, 50, or 100 items per page
+- **Advanced Filtering**: Filter by status, parent coupon, date range, and order association
+
+### 💫 Modern User Experience
+- **Interactive Notifications**: Toast notifications and confirmation dialogs
+- **Smooth Animations**: Hover effects and transitions throughout
+- **Responsive Design**: Optimized for all device sizes
+- **Visual Feedback**: Clear indicators for all user actions
+
+### 🔧 Technical Excellence
 - **HPOS Compatibility**: Fully compatible with WooCommerce High-Performance Order Storage
-- **Advanced Filtering**: Filter by status, parent coupon, date range, and search terms
-- **User Information**: Display user details associated with coupon usage
-- **Real-time Updates**: Live data updates with modern AJAX interface
+- **AJAX Powered**: Fast, responsive interface without page reloads
+- **Secure Operations**: Proper nonce verification and permission checks
+- **Clean Code**: Well-documented, WordPress standards compliant
 
 ## Requirements
 
@@ -37,19 +57,28 @@ ACFW Virtual Coupon Usage Tracker enhances your WooCommerce store's coupon manag
 
 The plugin adds a "Virtual Coupon Usage" page under the WooCommerce menu, providing:
 
-- Comprehensive coupon usage dashboard
-- Search and filter functionality
-- Sortable columns for data management
-- Detailed coupon information display
-- Export capabilities for reporting
+#### 📊 Interactive Dashboard
+- **Clickable Analytics Cards**: Instant filtering by clicking Total, Used, Pending, With Orders, or Without Orders
+- **Visual Active States**: Clear indication of which filter is currently applied
+- **Smart Defaults**: Starts with "Used" coupons for immediate productivity
 
-### Filtering Options
+#### 🔍 Advanced Filtering & Sorting
+- **Multi-layered Filtering**: Search, status, parent coupon, date range, and order association
+- **Column Sorting**: Click headers to sort by Order ID, Usage Date with visual sort indicators
+- **Parent Coupon Dropdown**: Dynamically loaded list of all parent coupons
+- **Date Intelligence**: Usage dates show actual vs estimated with visual distinction
 
-- **Search**: Find specific coupons by code or user information
-- **Status Filter**: Filter by coupon status (active, used, expired, etc.)
-- **Date Range**: Filter by creation or usage date
-- **Parent Coupon**: Filter by parent coupon relationship
-- **Order Association**: View coupons with or without order IDs
+#### ⚡ Enhanced Actions & Management
+- **Status Management**: Change coupon status with confirmation dialogs
+- **Action Menus**: Dropdown actions for each coupon (status changes, parent editing)
+- **Direct Parent Editing**: Quick access to parent coupon editor in new tab
+- **Bulk Status Updates**: Efficient coupon management workflow
+
+#### 🎨 Modern UX Features
+- **Toast Notifications**: Non-intrusive success/error feedback
+- **Confirmation Dialogs**: Secure actions with user confirmation
+- **Smooth Animations**: Hover effects and transitions throughout
+- **Responsive Design**: Optimized for desktop, tablet, and mobile
 
 ## HPOS Compatibility
 
@@ -82,6 +111,48 @@ acfw-virtual-coupon-usage-tracker/
 ├── readme.txt                             # WordPress.org readme
 └── readme.md                              # GitHub readme
 ```
+
+## Changelog
+
+### Version 1.1.1 - Major UI/UX Enhancement Release 🎉
+
+#### 🆕 New Features
+- **Clickable Statistics Cards**: All analytics boxes now filter results instantly with visual feedback
+- **Column Sorting**: Sort by Order ID and Usage Date with visual indicators
+- **Status Management System**: Change coupon status directly from the interface with confirmation dialogs
+- **Comprehensive Actions Menu**: Dropdown menus with multiple actions per coupon
+- **Parent Coupon Filtering**: Dynamic dropdown to filter by specific parent coupons
+- **Usage Date Intelligence**: Shows actual usage date vs estimated with visual distinction
+- **Interactive Notifications**: Toast notifications and modal confirmations for better UX
+- **Customizable Pagination**: Choose 20, 50, or 100 items per page
+
+#### ✨ Enhancements
+- **Improved UI/UX**: Hover effects, smooth animations, and better visual feedback throughout
+- **Enhanced Error Handling**: Better user feedback and error management
+- **Smart Default State**: Starts with "Used" filter active for immediate productivity
+- **Better Responsive Design**: Improved mobile and tablet experience
+- **Visual Active States**: Clear indication of current filters and sort orders
+
+#### 🔧 Technical Improvements
+- **Code Consistency**: Resolved merge conflicts and improved code organization
+- **Enhanced Security**: Better nonce verification and permission checks
+- **Performance Optimizations**: More efficient database queries and AJAX operations
+- **Modern JavaScript**: Updated admin.js with better event handling and state management
+
+### Version 1.1.0 - Performance & Compatibility Release
+- Enhanced HPOS compatibility
+- Improved AJAX pagination performance
+- Added advanced filtering options
+- Better error handling for missing order IDs
+- UI/UX improvements
+- Code optimization and security enhancements
+
+### Version 1.0.0 - Initial Release
+- Basic virtual coupon usage tracking
+- Order ID association
+- Admin interface
+- HPOS compatibility
+- Search and filter functionality
 
 ## Contributing
 

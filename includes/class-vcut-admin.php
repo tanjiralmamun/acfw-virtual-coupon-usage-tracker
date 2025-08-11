@@ -76,10 +76,22 @@ class VCUT_Admin {
         // Localize script
         wp_localize_script('vcut-admin-js', 'vcut_ajax', array(
             'ajax_url' => admin_url('admin-ajax.php'),
+            'admin_url' => admin_url(),
             'nonce' => wp_create_nonce('vcut_ajax_nonce'),
             'loading_text' => __('Loading...', 'virtual-coupon-usage-tracker'),
             'error_text' => __('An error occurred. Please try again.', 'virtual-coupon-usage-tracker'),
-            'no_data_text' => __('No virtual coupons found.', 'virtual-coupon-usage-tracker')
+            'no_data_text' => __('No virtual coupons found.', 'virtual-coupon-usage-tracker'),
+            'all_coupons_text' => __('All Coupons', 'virtual-coupon-usage-tracker'),
+            'confirm_status_change_text' => __('Are you sure you want to change this coupon status to %s?', 'virtual-coupon-usage-tracker'),
+            'invalid_coupon_text' => __('Invalid coupon ID provided.', 'virtual-coupon-usage-tracker'),
+            'status_pending' => __('Pending', 'virtual-coupon-usage-tracker'),
+            'status_used' => __('Used', 'virtual-coupon-usage-tracker'),
+            'status_unlimited' => __('Unlimited', 'virtual-coupon-usage-tracker'),
+            'confirm_title' => __('Confirm Status Change', 'virtual-coupon-usage-tracker'),
+            'success_title' => __('Success', 'virtual-coupon-usage-tracker'),
+            'error_title' => __('Error', 'virtual-coupon-usage-tracker'),
+            'warning_title' => __('Warning', 'virtual-coupon-usage-tracker'),
+            'info_title' => __('Information', 'virtual-coupon-usage-tracker')
         ));
     }
     
@@ -122,9 +134,15 @@ class VCUT_Admin {
                     <h3><?php _e('With Orders', 'virtual-coupon-usage-tracker'); ?></h3>
                     <span class="vcut-stat-number"><?php echo number_format($stats['with_orders']); ?></span>
                 </div>
+<<<<<<< HEAD
                 <div class="vcut-stat-card" data-filter="without_orders" title="<?php _e('Click to show virtual coupons without orders', 'virtual-coupon-usage-tracker'); ?>">
                     <h3><?php _e('Without Orders', 'virtual-coupon-usage-tracker'); ?></h3>
                     <span class="vcut-stat-number"><?php echo number_format($stats['without_orders']); ?></span>
+=======
+                <div class="vcut-stat-card vcut-error-coupons" data-filter="used_without_orders">
+                    <h3><?php _e('Used Without Orders', 'virtual-coupon-usage-tracker'); ?></h3>
+                    <span class="vcut-stat-number"><?php echo number_format($stats['used_without_orders']); ?></span>
+>>>>>>> aad14e771bd442e5832fa7e93b24b5bc5401405d
                 </div>
             </div>
             
@@ -157,6 +175,14 @@ class VCUT_Admin {
                     </div>
                     
                     <div class="vcut-filter-group">
+                        <label for="vcut-parent-coupon"><?php _e('Parent Coupon:', 'virtual-coupon-usage-tracker'); ?></label>
+                        <select id="vcut-parent-coupon">
+                            <option value=""><?php _e('All Coupons', 'virtual-coupon-usage-tracker'); ?></option>
+                            <!-- Options will be loaded via AJAX -->
+                        </select>
+                    </div>
+                    
+                    <div class="vcut-filter-group">
                         <button type="button" id="vcut-filter-btn" class="button button-primary"><?php _e('Filter', 'virtual-coupon-usage-tracker'); ?></button>
                         <button type="button" id="vcut-reset-btn" class="button"><?php _e('Reset', 'virtual-coupon-usage-tracker'); ?></button>
                     </div>
@@ -177,9 +203,25 @@ class VCUT_Admin {
                             <th scope="col" class="manage-column"><?php _e('Main Coupon', 'virtual-coupon-usage-tracker'); ?></th>
                             <th scope="col" class="manage-column"><?php _e('Status', 'virtual-coupon-usage-tracker'); ?></th>
                             <th scope="col" class="manage-column"><?php _e('User', 'virtual-coupon-usage-tracker'); ?></th>
-                            <th scope="col" class="manage-column"><?php _e('Order ID', 'virtual-coupon-usage-tracker'); ?></th>
+                            <th scope="col" class="manage-column column-sortable" data-sort="order_id">
+                                <a href="#" class="vcut-sort-link">
+                                    <span><?php _e('Order ID', 'virtual-coupon-usage-tracker'); ?></span>
+                                    <span class="sorting-indicators">
+                                        <span class="sorting-indicator vcut-sorting-indicator asc" data-order="asc"></span>
+                                        <span class="sorting-indicator vcut-sorting-indicator desc" data-order="desc"></span>
+                                    </span>
+                                </a>
+                            </th>
                             <th scope="col" class="manage-column"><?php _e('Order Total', 'virtual-coupon-usage-tracker'); ?></th>
-                            <th scope="col" class="manage-column"><?php _e('Created Date', 'virtual-coupon-usage-tracker'); ?></th>
+                            <th scope="col" class="manage-column column-sortable" data-sort="usage_date">
+                                <a href="#" class="vcut-sort-link">
+                                    <span><?php _e('Usage Date', 'virtual-coupon-usage-tracker'); ?></span>
+                                    <span class="sorting-indicators">
+                                        <span class="sorting-indicator vcut-sorting-indicator asc" data-order="asc"></span>
+                                        <span class="sorting-indicator vcut-sorting-indicator desc" data-order="desc"></span>
+                                    </span>
+                                </a>
+                            </th>
                             <th scope="col" class="manage-column"><?php _e('Actions', 'virtual-coupon-usage-tracker'); ?></th>
                         </tr>
                     </thead>
@@ -194,6 +236,14 @@ class VCUT_Admin {
                         <span id="vcut-pagination-text"></span>
                     </div>
                     <div class="vcut-pagination-controls">
+                        <div class="vcut-per-page-control">
+                            <label for="vcut-per-page"><?php _e('Items per page:', 'virtual-coupon-usage-tracker'); ?></label>
+                            <select id="vcut-per-page">
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100" selected>100</option>
+                            </select>
+                        </div>
                         <button type="button" id="vcut-prev-page" class="button" disabled><?php _e('Previous', 'virtual-coupon-usage-tracker'); ?></button>
                         <span id="vcut-page-numbers"></span>
                         <button type="button" id="vcut-next-page" class="button" disabled><?php _e('Next', 'virtual-coupon-usage-tracker'); ?></button>
@@ -221,6 +271,43 @@ class VCUT_Admin {
             </div>
         </div>
         
+        <!-- Notification system -->
+        <div id="vcut-notifications" class="vcut-notifications-container">
+            <!-- Notifications will be dynamically added here -->
+        </div>
+        
+        <!-- Confirmation dialog -->
+        <div id="vcut-confirm-dialog" class="vcut-modal vcut-confirm-modal" style="display: none;">
+            <div class="vcut-modal-content vcut-confirm-content">
+                <div class="vcut-modal-header">
+                    <h2 id="vcut-confirm-title"><?php _e('Confirm Action', 'virtual-coupon-usage-tracker'); ?></h2>
+                </div>
+                <div class="vcut-modal-body">
+                    <p id="vcut-confirm-message"></p>
+                    <div class="vcut-confirm-buttons">
+                        <button type="button" id="vcut-confirm-yes" class="button button-primary"><?php _e('Yes', 'virtual-coupon-usage-tracker'); ?></button>
+                        <button type="button" id="vcut-confirm-no" class="button"><?php _e('Cancel', 'virtual-coupon-usage-tracker'); ?></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Success dialog -->
+        <div id="vcut-success-dialog" class="vcut-modal vcut-success-modal" style="display: none;">
+            <div class="vcut-modal-content vcut-success-content">
+                <div class="vcut-modal-header vcut-success-header">
+                    <h2 id="vcut-success-title"><?php _e('Success', 'virtual-coupon-usage-tracker'); ?></h2>
+                </div>
+                <div class="vcut-modal-body">
+                    <div class="vcut-success-icon">✓</div>
+                    <p id="vcut-success-message"></p>
+                    <div class="vcut-success-buttons">
+                        <button type="button" id="vcut-success-ok" class="button button-primary"><?php _e('OK', 'virtual-coupon-usage-tracker'); ?></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <?php
     }
     
@@ -236,6 +323,7 @@ class VCUT_Admin {
         foreach ($coupon_data as $coupon) {
             $formatted[] = array(
                 'id' => $coupon['id'],
+                'coupon_id' => $coupon['coupon_id'],
                 'coupon_code' => esc_html($coupon['coupon_code']),
                 'main_coupon_title' => esc_html($coupon['main_coupon_title'] ?: __('N/A', 'virtual-coupon-usage-tracker')),
                 'status' => esc_html($coupon['coupon_status']),
@@ -245,7 +333,7 @@ class VCUT_Admin {
                 'order_id' => $coupon['order_id'] ? intval($coupon['order_id']) : null,
                 'order_total' => $coupon['order_total'] ? wc_price($coupon['order_total']) : '',
                 'order_status' => $coupon['order_status'] ? esc_html($coupon['order_status']) : '',
-                'created_date' => date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($coupon['date_created'])),
+                'usage_date' => self::get_usage_date($coupon),
                 'expire_date' => $coupon['date_expire'] && $coupon['date_expire'] !== '0000-00-00 00:00:00' ? 
                     date_i18n(get_option('date_format'), strtotime($coupon['date_expire'])) : __('Never', 'virtual-coupon-usage-tracker'),
                 'has_order' => !empty($coupon['order_id'])
@@ -288,6 +376,33 @@ class VCUT_Admin {
         return '-';
     }
     
+    /**
+     * Get usage date for display
+     *
+     * @param array $coupon Coupon data
+     * @return string Formatted usage date
+     */
+    private static function get_usage_date($coupon) {
+        // If coupon status is pending, show "Not Used"
+        if ($coupon['coupon_status'] === 'pending') {
+            return '<span class="vcut-not-used">' . __('Not Used', 'virtual-coupon-usage-tracker') . '</span>';
+        }
+        
+        // If there's an order date, use it (this is when it was actually used)
+        if (!empty($coupon['order_date'])) {
+            return date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($coupon['order_date']));
+        }
+        
+        // Fallback to creation date if no order date available but coupon is marked as used
+        if ($coupon['coupon_status'] === 'used') {
+            return '<span class="vcut-estimated-date">' . 
+                   date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($coupon['date_created'])) . 
+                   ' <small>(' . __('Est.', 'virtual-coupon-usage-tracker') . ')</small></span>';
+        }
+        
+        return '-';
+    }
+
     /**
      * Get status label for display
      *

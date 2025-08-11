@@ -27,10 +27,11 @@ class VCUT_Database {
         // Default arguments
         $defaults = array(
             'page' => 1,
-            'per_page' => 20,
+            'per_page' => 100,
             'search' => '',
             'status' => '',
-            'order_by' => 'date_created',
+            'parent_coupon' => 0,
+            'order_by' => 'order_id',
             'order' => 'DESC',
             'date_from' => '',
             'date_to' => '',
@@ -108,7 +109,19 @@ class VCUT_Database {
         // Status filter
         if (!empty($args['status'])) {
             $status = esc_sql($args['status']);
-            $where_conditions[] = "vc.coupon_status = '{$status}'";
+            if ($status === 'used_without_orders') {
+                // Special filter for used coupons without orders
+                $where_conditions[] = "vc.coupon_status = 'used'";
+                $where_conditions[] = "COALESCE(o.ID, oh.id) IS NULL";
+            } else {
+                $where_conditions[] = "vc.coupon_status = '{$status}'";
+            }
+        }
+        
+        // Parent coupon filter
+        if (!empty($args['parent_coupon'])) {
+            $parent_coupon = intval($args['parent_coupon']);
+            $where_conditions[] = "vc.coupon_id = {$parent_coupon}";
         }
         
         // Date range filter
@@ -134,8 +147,8 @@ class VCUT_Database {
         $where_clause = 'WHERE ' . implode(' AND ', $where_conditions);
         
         // Build ORDER BY clause
-        $allowed_order_by = array('date_created', 'coupon_code', 'user_name', 'order_date');
-        $order_by = in_array($args['order_by'], $allowed_order_by) ? $args['order_by'] : 'date_created';
+        $allowed_order_by = array('date_created', 'coupon_code', 'user_name', 'order_date', 'order_id', 'usage_date');
+        $order_by = in_array($args['order_by'], $allowed_order_by) ? $args['order_by'] : 'order_id';
         $order = strtoupper($args['order']) === 'ASC' ? 'ASC' : 'DESC';
         
         // Map order_by to correct column names
@@ -144,14 +157,18 @@ class VCUT_Database {
                 'date_created' => 'vc.date_created',
                 'coupon_code' => 'vc.virtual_coupon',
                 'user_name' => 'u.display_name',
-                'order_date' => 'o.date_created_gmt'
+                'order_date' => 'oh.date_created_gmt',
+                'order_id' => 'COALESCE(o.ID, oh.id)',
+                'usage_date' => 'COALESCE(oh.date_created_gmt, o.post_date, vc.date_created)'
             );
         } else {
             $order_by_mapping = array(
                 'date_created' => 'vc.date_created',
                 'coupon_code' => 'vc.virtual_coupon',
                 'user_name' => 'u.display_name',
-                'order_date' => 'o.post_date'
+                'order_date' => 'o.post_date',
+                'order_id' => 'COALESCE(o.ID, oh.id)',
+                'usage_date' => 'COALESCE(o.post_date, oh.date_created_gmt, vc.date_created)'
             );
         }
         
@@ -312,7 +329,8 @@ class VCUT_Database {
             'pending' => 0,
             'expired' => 0,
             'with_orders' => 0,
-            'without_orders' => 0
+            'without_orders' => 0,
+            'used_without_orders' => 0
         );
         
         // Get basic counts
@@ -365,9 +383,82 @@ class VCUT_Database {
         $stats['with_orders'] = intval($with_orders);
         $stats['without_orders'] = $stats['total'] - $stats['with_orders'];
         
+        // Get used without orders count
+        if ($hpos_enabled) {
+            $used_without_orders = $wpdb->get_var("
+                SELECT COUNT(DISTINCT vc.id)
+                FROM {$virtual_coupons_table} vc
+                LEFT JOIN {$order_itemmeta_table} oim ON oim.meta_key = 'acfw_virtual_coupon_id' AND oim.meta_value = vc.id
+                LEFT JOIN {$order_items_table} oi ON oi.order_item_id = oim.order_item_id AND oi.order_item_type = 'coupon'
+                LEFT JOIN {$wpdb->prefix}wc_orders oh ON oh.id = oi.order_id
+                WHERE vc.coupon_status = 'used' AND oh.id IS NULL
+            ");
+        } else {
+            $used_without_orders = $wpdb->get_var("
+                SELECT COUNT(DISTINCT vc.id)
+                FROM {$virtual_coupons_table} vc
+                LEFT JOIN {$order_itemmeta_table} oim ON oim.meta_key = 'acfw_virtual_coupon_id' AND oim.meta_value = vc.id
+                LEFT JOIN {$order_items_table} oi ON oi.order_item_id = oim.order_item_id AND oi.order_item_type = 'coupon'
+                LEFT JOIN {$wpdb->posts} o ON o.ID = oi.order_id AND o.post_type = 'shop_order'
+                WHERE vc.coupon_status = 'used' AND o.ID IS NULL
+            ");
+        }
+        
+        $stats['used_without_orders'] = intval($used_without_orders);
+        
         return $stats;
     }
     
+    /**
+     * Get parent coupons for filter dropdown
+     *
+     * @return array Array of parent coupons
+     */
+    public static function get_parent_coupons() {
+        global $wpdb;
+        
+        $virtual_coupons_table = $wpdb->prefix . 'acfw_virtual_coupons';
+        
+        $results = $wpdb->get_results("
+            SELECT DISTINCT p.ID, p.post_title
+            FROM {$virtual_coupons_table} vc
+            INNER JOIN {$wpdb->posts} p ON p.ID = vc.coupon_id AND p.post_type = 'shop_coupon'
+            WHERE p.post_status = 'publish'
+            ORDER BY p.post_title ASC
+        ", ARRAY_A);
+        
+        return $results ?: array();
+    }
+    
+    /**
+     * Change virtual coupon status
+     *
+     * @param int $coupon_id Virtual coupon ID
+     * @param string $new_status New status (pending, used, unlimited)
+     * @return bool True if successful
+     */
+    public static function change_virtual_coupon_status($coupon_id, $new_status) {
+        global $wpdb;
+        
+        $virtual_coupons_table = $wpdb->prefix . 'acfw_virtual_coupons';
+        
+        // Validate status
+        $allowed_statuses = array('pending', 'used', 'unlimited');
+        if (!in_array($new_status, $allowed_statuses)) {
+            return false;
+        }
+        
+        $result = $wpdb->update(
+            $virtual_coupons_table,
+            array('coupon_status' => $new_status),
+            array('id' => $coupon_id),
+            array('%s'),
+            array('%d')
+        );
+        
+        return $result !== false;
+    }
+
     /**
      * Check if virtual coupons table exists
      *

@@ -51,13 +51,9 @@ class VCUT_Ajax {
         $parent_coupon = isset($_POST['parent_coupon']) ? intval($_POST['parent_coupon']) : 0;
         $date_from = isset($_POST['date_from']) ? sanitize_text_field($_POST['date_from']) : '';
         $date_to = isset($_POST['date_to']) ? sanitize_text_field($_POST['date_to']) : '';
-<<<<<<< HEAD
         $order_filter = isset($_POST['order_filter']) ? sanitize_text_field($_POST['order_filter']) : '';
         $stat_filter = isset($_POST['stat_filter']) ? sanitize_text_field($_POST['stat_filter']) : '';
         $order_by = isset($_POST['order_by']) ? sanitize_text_field($_POST['order_by']) : 'date_created';
-=======
-        $order_by = isset($_POST['order_by']) ? sanitize_text_field($_POST['order_by']) : 'order_id';
->>>>>>> aad14e771bd442e5832fa7e93b24b5bc5401405d
         $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : 'DESC';
         
         // Validate per_page value

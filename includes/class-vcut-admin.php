@@ -134,15 +134,14 @@ class VCUT_Admin {
                     <h3><?php _e('With Orders', 'virtual-coupon-usage-tracker'); ?></h3>
                     <span class="vcut-stat-number"><?php echo number_format($stats['with_orders']); ?></span>
                 </div>
-<<<<<<< HEAD
-                <div class="vcut-stat-card" data-filter="without_orders" title="<?php _e('Click to show virtual coupons without orders', 'virtual-coupon-usage-tracker'); ?>">
-                    <h3><?php _e('Without Orders', 'virtual-coupon-usage-tracker'); ?></h3>
-                    <span class="vcut-stat-number"><?php echo number_format($stats['without_orders']); ?></span>
-=======
-                <div class="vcut-stat-card vcut-error-coupons" data-filter="used_without_orders">
-                    <h3><?php _e('Used Without Orders', 'virtual-coupon-usage-tracker'); ?></h3>
-                    <span class="vcut-stat-number"><?php echo number_format($stats['used_without_orders']); ?></span>
->>>>>>> aad14e771bd442e5832fa7e93b24b5bc5401405d
+                    <div class="vcut-stat-card" data-filter="without_orders" title="<?php _e('Click to show virtual coupons without orders', 'virtual-coupon-usage-tracker'); ?>">
+                        <h3><?php _e('Without Orders', 'virtual-coupon-usage-tracker'); ?></h3>
+                        <span class="vcut-stat-number"><?php echo number_format($stats['without_orders']); ?></span>
+                    </div>
+                    <div class="vcut-stat-card vcut-error-coupons" data-filter="used_without_orders">
+                        <h3><?php _e('Used Without Orders', 'virtual-coupon-usage-tracker'); ?></h3>
+                        <span class="vcut-stat-number"><?php echo number_format($stats['used_without_orders']); ?></span>
+                    </div>
                 </div>
             </div>
             

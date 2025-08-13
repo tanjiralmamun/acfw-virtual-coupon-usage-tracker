@@ -30,15 +30,10 @@
             // Set default filter to "used" status
             this.filters.status = 'used';
             this.bindEvents();
-<<<<<<< HEAD
-            
             // Mark the "Used" card as active by default since we start with used filter
             $('.vcut-stat-card[data-filter="used"]').addClass('active');
-            
-=======
             this.loadParentCoupons();
             this.updateSortingUI();
->>>>>>> aad14e771bd442e5832fa7e93b24b5bc5401405d
             this.loadCoupons();
         },
 
@@ -323,13 +318,8 @@
                 parent_coupon: this.filters.parent_coupon,
                 date_from: this.filters.date_from,
                 date_to: this.filters.date_to,
-<<<<<<< HEAD
-                order_filter: this.filters.order_filter,
-                stat_filter: this.filters.stat_filter
-=======
                 order_by: this.sorting.orderBy,
                 order: this.sorting.order
->>>>>>> aad14e771bd442e5832fa7e93b24b5bc5401405d
             };
 
             $.post(vcut_ajax.ajax_url, data, function(response) {

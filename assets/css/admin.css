@@ -61,8 +61,8 @@
     line-height: 1.2;
 }
 
-.vcut-stat-card[data-filter="without_orders"] h3,
-.vcut-stat-card[data-filter="without_orders"] .vcut-stat-number {
+.vcut-stat-card[data-filter="used_without_orders"] h3,
+.vcut-stat-card[data-filter="used_without_orders"] .vcut-stat-number {
     color: #cd1d36;
 }
 

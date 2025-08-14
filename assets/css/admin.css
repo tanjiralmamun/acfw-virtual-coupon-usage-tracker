@@ -2,6 +2,28 @@
  * Admin CSS for Virtual Coupon Usage Tracker
  */
 
+/* Ensure WordPress admin footer is not affected by plugin layout */
+#wpfooter {
+    position: relative !important;
+    clear: both !important;
+    z-index: auto !important;
+}
+
+#wpcontent,
+#wpbody,
+#wpbody-content {
+    position: relative !important;
+    z-index: auto !important;
+}
+
+/* Ensure plugin content doesn't interfere with admin layout */
+.woocommerce_page_virtual-coupon-usage .wrap {
+    position: relative;
+    z-index: auto;
+    overflow: visible;
+    min-height: auto;
+}
+
 /* Statistics Cards */
 .vcut-stats-cards {
     display: flex;
@@ -309,12 +331,18 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh; /* Use viewport height instead of 100% */
     background: rgba(0, 0, 0, 0.5);
-    z-index: 100000;
-    display: flex;
+    z-index: 100050;
+    display: none; /* Default to hidden */
     align-items: center;
     justify-content: center;
+    overflow-y: auto;
+}
+
+.vcut-modal.show,
+.vcut-modal[style*="display: flex"] {
+    display: flex !important;
 }
 
 .vcut-modal-content {
@@ -608,11 +636,13 @@
     position: fixed;
     top: 32px;
     right: 20px;
-    z-index: 999999;
+    z-index: 100040;
     max-width: 400px;
+    pointer-events: none; /* Prevent interference with other elements */
 }
 
 .vcut-notification {
+    pointer-events: auto; /* Re-enable pointer events for notifications */
     background: #fff;
     border: 1px solid #c3c4c7;
     border-radius: 3px;

@@ -53,13 +53,15 @@ class VCUT_Ajax {
         $date_to = isset($_POST['date_to']) ? sanitize_text_field($_POST['date_to']) : '';
         $order_filter = isset($_POST['order_filter']) ? sanitize_text_field($_POST['order_filter']) : '';
         $stat_filter = isset($_POST['stat_filter']) ? sanitize_text_field($_POST['stat_filter']) : '';
-        $order_by = isset($_POST['order_by']) ? sanitize_text_field($_POST['order_by']) : 'date_created';
+        $order_by = isset($_POST['order_by']) ? sanitize_text_field($_POST['order_by']) : 'order_id';
         $order = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : 'DESC';
         
-        // Validate per_page value
+        // Validate per_page value and limit for performance
         if (!in_array($per_page, array(20, 50, 100))) {
             $per_page = 100;
         }
+        // Limit max results for performance
+        $per_page = min($per_page, 500);
         
         // Validate and sanitize date inputs
         if ($date_from && !$this->validate_date($date_from)) {

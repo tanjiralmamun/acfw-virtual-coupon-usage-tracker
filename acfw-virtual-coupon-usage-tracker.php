@@ -3,7 +3,7 @@
  * Plugin Name: ACFW Virtual Coupon Usage Tracker
  * Plugin URI: https://tanjirsdev.com/plugins/virtual-coupon-usage-tracker
  * Description: Track virtual coupon usage with order IDs, show reasons for missing order IDs, and provide AJAX pagination. Compatible with HPOS.
- * Version: 1.1.1
+ * Version: 1.1.2
  * Author: Tanjir Al Mamun
  * Author URI: https://tanjirsdev.com
  * Text Domain: virtual-coupon-usage-tracker
@@ -26,7 +26,7 @@ if (!defined('ABSPATH')) {
 define('VCUT_PLUGIN_FILE', __FILE__);
 define('VCUT_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('VCUT_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('VCUT_PLUGIN_VERSION', '1.1.1');
+define('VCUT_PLUGIN_VERSION', '1.1.2');
 define('VCUT_PLUGIN_BASENAME', plugin_basename(__FILE__));
 
 /**

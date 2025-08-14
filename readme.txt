@@ -4,7 +4,7 @@ Tags: woocommerce, coupons, advanced coupons, virtual coupons, tracking, usage
 Requires at least: 5.0
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -87,6 +87,14 @@ No, the plugin is optimized for performance with AJAX-based pagination and effic
 
 == Changelog ==
 
+= 1.1.2 =
+* **Performance**: Optimized AJAX requests for faster loading and better responsiveness
+* **Fixed**: Fast clicking between statistics cards no longer shows delayed previous content
+* **Improved**: Request cancellation system prevents overlapping data when switching filters quickly
+* **Enhanced**: Immediate visual feedback when clicking statistics cards for better user experience
+* **Optimized**: Loading states and transitions for smoother interface interactions
+* **Fixed**: WordPress admin footer layout issues resolved with proper element positioning
+
 = 1.1.1 =
 * **New**: Clickable statistics cards for instant filtering - all analytics boxes now filter results with visual feedback
 * **New**: Column sorting functionality for Order ID and Usage Date with visual indicators
@@ -119,6 +127,9 @@ No, the plugin is optimized for performance with AJAX-based pagination and effic
 * Search and filter functionality
 
 == Upgrade Notice ==
+
+= 1.1.2 =
+Performance optimization update! Faster loading, fixed fast clicking issues between statistics cards, and resolved admin footer layout problems. Recommended for smoother user experience.
 
 = 1.1.1 =
 Major UI/UX upgrade! All statistics cards are now clickable for instant filtering, added status management, column sorting, and many more interactive features. Highly recommended upgrade for better user experience.

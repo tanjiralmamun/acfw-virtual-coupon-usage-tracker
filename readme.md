@@ -114,6 +114,23 @@ acfw-virtual-coupon-usage-tracker/
 
 ## Changelog
 
+### Version 1.1.2 - Performance & UX Optimization 🚀
+
+#### 🚀 Performance Improvements
+- **Optimized AJAX Requests**: Faster loading and better responsiveness across all interactions
+- **Request Cancellation System**: Prevents overlapping data when switching filters quickly
+- **Reduced Server Load**: Performance limits and optimized database queries
+
+#### 🐛 Bug Fixes
+- **Fast Clicking Issue**: Fixed delay showing previous content when rapidly clicking between statistics cards
+- **WordPress Admin Footer**: Resolved layout issues with proper element positioning and z-index management
+- **Loading State Management**: Improved transitions and immediate visual feedback
+
+#### ✨ User Experience Enhancements
+- **Immediate Response**: Statistics cards now respond instantly without waiting for previous requests
+- **Smooth Transitions**: Better loading states and visual feedback during data switches
+- **Error Handling**: Smarter error management that doesn't show messages for cancelled requests
+
 ### Version 1.1.1 - Major UI/UX Enhancement Release 🎉
 
 #### 🆕 New Features

@@ -22,6 +22,7 @@ class VCUT_Admin {
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
         add_action('admin_init', array($this, 'check_requirements'));
+        add_action('admin_footer', array($this, 'admin_footer_modals'));
     }
     
     /**
@@ -134,14 +135,14 @@ class VCUT_Admin {
                     <h3><?php _e('With Orders', 'virtual-coupon-usage-tracker'); ?></h3>
                     <span class="vcut-stat-number"><?php echo number_format($stats['with_orders']); ?></span>
                 </div>
-                    <div class="vcut-stat-card" data-filter="without_orders" title="<?php _e('Click to show virtual coupons without orders', 'virtual-coupon-usage-tracker'); ?>">
-                        <h3><?php _e('Without Orders', 'virtual-coupon-usage-tracker'); ?></h3>
-                        <span class="vcut-stat-number"><?php echo number_format($stats['without_orders']); ?></span>
-                    </div>
-                    <div class="vcut-stat-card vcut-error-coupons" data-filter="used_without_orders">
-                        <h3><?php _e('Used Without Orders', 'virtual-coupon-usage-tracker'); ?></h3>
-                        <span class="vcut-stat-number"><?php echo number_format($stats['used_without_orders']); ?></span>
-                    </div>
+                <div class="vcut-stat-card" data-filter="without_orders" title="<?php _e('Click to show virtual coupons without orders', 'virtual-coupon-usage-tracker'); ?>">
+                    <h3><?php _e('Without Orders', 'virtual-coupon-usage-tracker'); ?></h3>
+                    <span class="vcut-stat-number"><?php echo number_format($stats['without_orders']); ?></span>
+                </div>
+                <div class="vcut-stat-card vcut-error-coupons" data-filter="used_without_orders" title="<?php _e('Click to show used virtual coupons without orders', 'virtual-coupon-usage-tracker'); ?>">
+                    <h3><?php _e('Used Without Orders', 'virtual-coupon-usage-tracker'); ?></h3>
+                    <span class="vcut-stat-number"><?php echo number_format($stats['used_without_orders']); ?></span>
+                </div>
                 </div>
             </div>
             
@@ -251,6 +252,24 @@ class VCUT_Admin {
             </div>
         </div>
         
+        <?php
+    }
+    
+    /**
+     * Add modals to admin footer only on plugin page
+     */
+    public function admin_footer_modals() {
+        $screen = get_current_screen();
+        if ($screen && $screen->id === 'woocommerce_page_virtual-coupon-usage') {
+            $this->render_modals_and_notifications();
+        }
+    }
+    
+    /**
+     * Render modals and notifications outside main content flow
+     */
+    private function render_modals_and_notifications() {
+        ?>
         <!-- Modal for showing missing order reasons -->
         <div id="vcut-modal" class="vcut-modal" style="display: none;">
             <div class="vcut-modal-content">

@@ -11,6 +11,7 @@
         totalPages: 1,
         isLoading: false,
         perPage: 100,
+        currentRequest: null,
         sorting: {
             orderBy: 'order_id',
             order: 'desc'
@@ -160,13 +161,8 @@
                 self.loadCoupons();
             });
 
-            // Error coupons stat card click
-            $('.vcut-error-coupons').on('click', function() {
-                self.filters.status = $(this).data('filter');
-                $('#vcut-status').val(self.filters.status);
-                self.currentPage = 1;
-                self.loadCoupons();
-            });
+            // All stat cards use the same handler
+            // (removing the separate error coupons handler since it's covered by the main handler)
 
             // Actions dropdown
             $(document).on('click', '.vcut-actions-btn', function(e) {
@@ -203,17 +199,26 @@
 
         // Apply filter based on statistics card clicked
         applyStatCardFilter: function(filter, $card) {
+            // Cancel any ongoing AJAX request
+            if (this.currentRequest) {
+                this.currentRequest.abort();
+            }
+            
             // Remove active class from all cards
             $('.vcut-stat-card').removeClass('active');
             
             // Add active class to clicked card
             $card.addClass('active');
             
+            // Immediately clear table content to show loading
+            this.showLoading();
+            
             // Reset other filters except search
             var currentSearch = this.filters.search;
             this.filters = {
                 search: currentSearch,
                 status: '',
+                parent_coupon: '',
                 date_from: '',
                 date_to: '',
                 order_filter: '',
@@ -237,11 +242,15 @@
                 case 'without_orders':
                     this.filters.order_filter = 'without_orders';
                     break;
+                case 'used_without_orders':
+                    this.filters.status = 'used_without_orders';
+                    break;
             }
             
             // Update form fields to reflect current filters
             $('#vcut-search').val(this.filters.search);
             $('#vcut-status').val(this.filters.status);
+            $('#vcut-parent-coupon').val(this.filters.parent_coupon);
             $('#vcut-date-from').val(this.filters.date_from);
             $('#vcut-date-to').val(this.filters.date_to);
             
@@ -252,8 +261,16 @@
 
         // Apply filters and reload data
         applyFilters: function() {
+            // Cancel any ongoing AJAX request
+            if (this.currentRequest) {
+                this.currentRequest.abort();
+            }
+            
             // Remove active state from stat cards when applying manual filters
             $('.vcut-stat-card').removeClass('active');
+            
+            // Show loading immediately
+            this.showLoading();
             
             this.filters.search = $('#vcut-search').val();
             this.filters.status = $('#vcut-status').val();
@@ -294,16 +311,23 @@
 
         // Load specific page
         loadPage: function(page) {
+            // Cancel any ongoing AJAX request
+            if (this.currentRequest) {
+                this.currentRequest.abort();
+            }
+            
             this.currentPage = page;
+            this.showLoading();
             this.loadCoupons();
         },
 
-        // Load coupons data via AJAX
+                // Load coupons data via AJAX
         loadCoupons: function() {
-            if (this.isLoading) {
-                return;
+            // Cancel any ongoing request
+            if (this.currentRequest) {
+                this.currentRequest.abort();
             }
-
+            
             this.isLoading = true;
             this.showLoading();
 
@@ -313,30 +337,46 @@
                 nonce: vcut_ajax.nonce,
                 page: this.currentPage,
                 per_page: this.perPage,
-                search: this.filters.search,
-                status: this.filters.status,
-                parent_coupon: this.filters.parent_coupon,
-                date_from: this.filters.date_from,
-                date_to: this.filters.date_to,
-                order_by: this.sorting.orderBy,
-                order: this.sorting.order
+                search: this.filters.search || '',
+                status: this.filters.status || '',
+                parent_coupon: this.filters.parent_coupon || '',
+                date_from: this.filters.date_from || '',
+                date_to: this.filters.date_to || '',
+                order_filter: this.filters.order_filter || '',
+                stat_filter: this.filters.stat_filter || '',
+                order_by: this.sorting.orderBy || 'order_id',
+                order: this.sorting.order || 'DESC'
             };
 
-            $.post(vcut_ajax.ajax_url, data, function(response) {
-                self.isLoading = false;
-                self.hideLoading();
+            this.currentRequest = $.ajax({
+                url: vcut_ajax.ajax_url,
+                type: 'POST',
+                data: data,
+                timeout: 5000, // 5 seconds timeout
+                cache: false,
+                success: function(response) {
+                    self.isLoading = false;
+                    self.currentRequest = null;
+                    self.hideLoading();
 
-                if (response.success) {
-                    self.totalPages = response.data.pages;
-                    self.updateTable(response.data.html);
-                    self.updatePagination(response.data.total, response.data.current_page, response.data.pages);
-                } else {
-                    self.showError(response.data.message || vcut_ajax.error_text);
+                    if (response.success) {
+                        self.totalPages = response.data.pages;
+                        self.updateTable(response.data.html);
+                        self.updatePagination(response.data.total, response.data.current_page, response.data.pages);
+                    } else {
+                        self.showError(response.data.message || vcut_ajax.error_text);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    self.isLoading = false;
+                    self.currentRequest = null;
+                    self.hideLoading();
+                    
+                    // Don't show error for aborted requests (user clicked another card)
+                    if (status !== 'abort') {
+                        self.showError(vcut_ajax.error_text);
+                    }
                 }
-            }).fail(function() {
-                self.isLoading = false;
-                self.hideLoading();
-                self.showError(vcut_ajax.error_text);
             });
         },
 
@@ -442,6 +482,8 @@
         showLoading: function() {
             $('#vcut-loading').show();
             $('#vcut-results-table').hide();
+            // Clear pagination info to avoid showing old data
+            $('.vcut-pagination-info').text(vcut_ajax.loading_text || 'Loading...');
         },
 
         // Hide loading indicator
